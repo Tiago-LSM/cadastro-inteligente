@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Cadastro Inteligente</title>
+
+<style>
+:root{
+    --azul:#2563eb;
+    --verde:#16a34a;
+    --vermelho:#dc2626;
+    --amarelo:#facc15;
+    --laranja:#fb923c;
+    --cinza:#e5e7eb;
+    --radius:12px;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#dbeafe,#eff6ff);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:2rem;
+}
+
+.form-container{
+    background:white;
+    width:100%;
+    max-width:500px;
+    padding:2rem;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:0.5rem;
+    color:#1e293b;
+}
+
+.subtitle{
+    text-align:center;
+    color:#64748b;
+    margin-bottom:2rem;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    margin-bottom:1.3rem;
+    gap:0.5rem;
+}
+
+label{
+    font-weight:600;
+    color:#334155;
+}
+
+input{
+    padding:0.9rem 1rem;
+    border:2px solid var(--cinza);
+    border-radius:var(--radius);
+    font-size:1rem;
+    outline:none;
+    transition:0.3s;
+}
+
+input:focus{
+    border-color:var(--azul);
+}
+
+input.error{
+    border-color:var(--vermelho);
+    background:#fef2f2;
+}
+
+input.success{
+    border-color:var(--verde);
+    background:#f0fdf4;
+}
+
+.error-msg{
+    color:var(--vermelho);
+    font-size:0.85rem;
+    min-height:18px;
+}
+
+button{
+    width:100%;
+    padding:1rem;
+    border:none;
+    border-radius:var(--radius);
+    background:var(--azul);
+    color:white;
+    font-size:1rem;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+button:disabled{
+    opacity:0.7;
+    cursor:not-allowed;
+}
+
+.success-message{
+    margin-top:1rem;
+    background:#dcfce7;
+    color:#166534;
+    padding:1rem;
+    border-radius:10px;
+    display:none;
+    text-align:center;
+    font-weight:bold;
+}
+
+.password-strength{
+    width:100%;
+    height:10px;
+    background:#e2e8f0;
+    border-radius:999px;
+    overflow:hidden;
+}
+
+.strength-bar{
+    height:100%;
+    width:0%;
+    transition:0.4s;
+}
+
+.strength-text{
+    font-size:0.85rem;
+    font-weight:bold;
+}
+
+.spinner{
+    width:18px;
+    height:18px;
+    border:3px solid rgba(255,255,255,0.4);
+    border-top:3px solid white;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+@media(max-width:600px){
+    .form-container{
+        padding:1.5rem;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="form-container">
+
+    <h1>Cadastro Inteligente</h1>
+    <p class="subtitle">Crie sua conta gratuitamente</p>
+
+    <form id="cadastroForm" novalidate>
+
+        <div class="form-group">
+            <label for="nome">Nome Completo *</label>
+
+            <input
+                type="text"
+                id="nome"
+                name="nome"
+                placeholder="Digite seu nome"
+                required
+                minlength="3"
+                autocomplete="name"
+            >
+
+            <span class="error-msg" id="nome-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="email">E-mail *</label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Digite seu e-mail"
+                required
+                autocomplete="email"
+            >
+
+            <span class="error-msg" id="email-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="senha">Senha *</label>
+
+            <input
+                type="password"
+                id="senha"
+                name="senha"
+                placeholder="Digite sua senha"
+                required
+                minlength="8"
+                autocomplete="new-password"
+            >
+
+            <div class="password-strength">
+                <div class="strength-bar" id="strengthBar"></div>
+            </div>
+
+            <span class="strength-text" id="strengthText"></span>
+
+            <span class="error-msg" id="senha-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmarSenha">Confirmar Senha *</label>
+
+            <input
+                type="password"
+                id="confirmarSenha"
+                name="confirmarSenha"
+                placeholder="Confirme sua senha"
+                required
+                autocomplete="new-password"
+            >
+
+            <span class="error-msg" id="confirmarSenha-error"></span>
+        </div>
+
+        <button type="submit" id="submitBtn">
+            Criar Conta
+        </button>
+
+        <div class="success-message" id="successMessage">
+            ✅ Cadastro realizado com sucesso!
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+const form = document.getElementById('cadastroForm');
+
+const nome = document.getElementById('nome');
+const email = document.getElementById('email');
+const senha = document.getElementById('senha');
+const confirmarSenha = document.getElementById('confirmarSenha');
+
+const submitBtn = document.getElementById('submitBtn');
+
+const strengthBar = document.getElementById('strengthBar');
+const strengthText = document.getElementById('strengthText');
+
+function mostrarErro(input, mensagem){
+    const erro = document.getElementById(input.id + '-error');
+
+    input.classList.add('error');
+    input.classList.remove('success');
+
+    erro.textContent = mensagem;
+}
+
+function mostrarSucesso(input){
+    const erro = document.getElementById(input.id + '-error');
+
+    input.classList.remove('error');
+    input.classList.add('success');
+
+    erro.textContent = '';
+}
+
+function validarNome(){
+    const valor = nome.value.trim();
+
+    if(valor === ''){
+        mostrarErro(nome,'⚠️ Nome obrigatório');
+        return false;
+    }
+
+    if(valor.length < 3){
+        mostrarErro(nome,'⚠️ Mínimo de 3 caracteres');
+        return false;
+    }
+
+    mostrarSucesso(nome);
+    return true;
+}
+
+function validarEmail(){
+    const valor = email.value.trim();
+
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if(valor === ''){
+        mostrarErro(email,'⚠️ E-mail obrigatório');
+        return false;
+    }
+
+    if(!regex.test(valor)){
+        mostrarErro(email,'⚠️ E-mail inválido');
+        return false;
+    }
+
+    mostrarSucesso(email);
+    return true;
+}
+
+function validarSenha(){
+    const valor = senha.value;
+
+    if(valor.length < 8){
+        mostrarErro(senha,'⚠️ Mínimo 8 caracteres');
+        return false;
+    }
+
+    if(!/[A-Z]/.test(valor)){
+        mostrarErro(senha,'⚠️ Precisa de letra maiúscula');
+        return false;
+    }
+
+    if(!/[0-9]/.test(valor)){
+        mostrarErro(senha,'⚠️ Precisa de número');
+        return false;
+    }
+
+    mostrarSucesso(senha);
+    return true;
+}
+
+function validarConfirmacaoSenha(){
+    if(confirmarSenha.value === ''){
+        mostrarErro(confirmarSenha,'⚠️ Confirme sua senha');
+        return false;
+    }
+
+    if(confirmarSenha.value !== senha.value){
+        mostrarErro(confirmarSenha,'⚠️ As senhas não coincidem');
+        return false;
+    }
+
+    mostrarSucesso(confirmarSenha);
+    return true;
+}
+
+function atualizarForcaSenha(){
+
+    const valor = senha.value;
+
+    let forca = 0;
+
+    if(valor.length >= 8) forca++;
+    if(/[A-Z]/.test(valor)) forca++;
+    if(/[0-9]/.test(valor)) forca++;
+    if(/[^A-Za-z0-9]/.test(valor)) forca++;
+
+    const porcentagem = forca * 25;
+
+    strengthBar.style.width = porcentagem + '%';
+
+    if(forca === 1){
+        strengthBar.style.background = '#dc2626';
+        strengthText.textContent = 'Fraca';
+    }
+    else if(forca === 2){
+        strengthBar.style.background = '#fb923c';
+        strengthText.textContent = 'Razoável';
+    }
+    else if(forca === 3){
+        strengthBar.style.background = '#facc15';
+        strengthText.textContent = 'Boa';
+    }
+    else if(forca === 4){
+        strengthBar.style.background = '#16a34a';
+        strengthText.textContent = 'Forte';
+    }
+    else{
+        strengthBar.style.width = '0%';
+        strengthText.textContent = '';
+    }
+}
+
+nome.addEventListener('blur', validarNome);
+email.addEventListener('blur', validarEmail);
+
+senha.addEventListener('input', () => {
+    validarSenha();
+    atualizarForcaSenha();
+});
+
+confirmarSenha.addEventListener('blur', validarConfirmacaoSenha);
+
+form.addEventListener('submit', function(e){
+
+    e.preventDefault();
+
+    const nomeValido = validarNome();
+    const emailValido = validarEmail();
+    const senhaValida = validarSenha();
+    const confirmacaoValida = validarConfirmacaoSenha();
+
+    if(nomeValido && emailValido && senhaValida && confirmacaoValida){
+
+        submitBtn.disabled = true;
+
+        submitBtn.innerHTML = `
+            <div class="spinner"></div>
+            Enviando...
+        `;
+
+        setTimeout(() => {
+
+            document.getElementById('successMessage').style.display = 'block';
+
+            form.reset();
+
+            strengthBar.style.width = '0%';
+            strengthText.textContent = '';
+
+            document.querySelectorAll('input').forEach(input => {
+                input.classList.remove('success');
+            });
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Criar Conta';
+
+        },2000);
+    }
+
+});
+</script>
+
+</body>
+</html>
