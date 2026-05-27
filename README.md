@@ -1,2 +1,1 @@
-# cadastro-inteligente
-Projeto de formulário moderno desenvolvido com HTML5, CSS3 e JavaScript puro, focado em responsividade, acessibilidade e experiência do usuário.
+Formulário inteligente desenvolvido com HTML5, CSS3 e JavaScript, contendo validação dinâmica de campos, indicador de força de senha, responsividade e interface moderna. Projeto acadêmico utilizando GitHub e GitHub Pages para versionamento e publicação.
